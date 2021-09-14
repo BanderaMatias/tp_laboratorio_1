@@ -35,10 +35,14 @@ int main(void) {
 		float resultadoSuma;
 		float resultadoResta;
 		float resultadoMultiplicacion;
+		float resultadoFactorialUno;
+		float resultadoFactorialDos;
 
 		salir = 0;
 		numeroUno = 0;
 		numeroDos = 0;
+		resultadoFactorialUno=1;
+		resultadoFactorialDos=1;
 		flagPrimerOperando = 0;
 		flagSegundoOperando =0;
 
@@ -82,6 +86,8 @@ int main(void) {
 						resultadoResta = resta( numeroUno, numeroDos);
 						resultadoMultiplicacion = multiplicacion(numeroUno, numeroDos);
 						divisionValida = division(numeroUno, numeroDos, &resultadoDivision);
+						factorial(numeroUno, &resultadoFactorialUno);
+						factorial(numeroDos, &resultadoFactorialDos);
 
 					}else{
 						printf("Falta ingresar alguno de los operandos");
@@ -91,13 +97,15 @@ int main(void) {
 				}
 				case 4:{
 						printf("El resultado de la suma es : %.2f \n",resultadoSuma);
-						printf("El resultado de la suma es : %.2f \n" ,resultadoResta);
-						printf("El resultado de la suma es : %.2f \n",resultadoMultiplicacion);
+						printf("El resultado de la resta es : %.2f \n" ,resultadoResta);
+						printf("El resultado de la multiplicacion es : %.2f \n",resultadoMultiplicacion);
 						if(divisionValida == 1){
-							printf("El resultado de la suma es : %.2f \n",resultadoDivision);
+							printf("El resultado de la division es : %.2f \n",resultadoDivision);
 						}else{
 							printf("No es posible dividir por cero \n");
 						}
+						printf("El factorial del primer operando es : %.2f \n",resultadoFactorialUno);
+						printf("El factorial del segundo operando es : %.2f \n",resultadoFactorialDos);
 
 
 					break;

@@ -44,6 +44,12 @@ int division(float numeroUno, float numeroDos, float* resultadoDivision){
 	return retorno;
 }
 
-void facorial(){
-
+void factorial(float numero, float* pResultado ){
+	float acumulador;
+	acumulador = 1;
+	while(numero > 1) {
+	       acumulador *= numero;
+	       numero--;
+	    }
+	*pResultado = acumulador;
 }

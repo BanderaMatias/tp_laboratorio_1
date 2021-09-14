@@ -15,6 +15,7 @@ float suma(float numeroUno, float numeroDos);
 float resta(float numeroUno, float numeroDos);
 float multiplicacion(float numeroUno, float numeroDos);
 int division(float numeroUno, float numeroDos, float* resultadoDivision);
+void factorial(float numero, float* pResultado );
 
 
 #endif /* CALCULOS_H_ */
