@@ -10,12 +10,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
+/*
 int pedirNumero(int* pResultado, char mensaje[], char Error[], int minimo, int maximo, int reintentos);
-int pedirFlotante(float* pResultado, char mensaje[], char Error[], float minimo, float maximo, int reintentos);
 int pedirCaracter(char* pResultado, char mensaje[], char Error[], char minimo, char maximo, int reintentos);
-
+*/
+int pedirFlotante(float* pResultado, char mensaje[], char Error[], float minimo, float maximo, int reintentos);
 int pedirStringTexto(char* pResultado,int len, char mensaje[], char mensajeError[],int reintentos);
-
+int pedirStringEntero(int* pResultado, char* mensaje, char* mensajeError, int minimo, int maximo, int reintentos);
 
 #endif /* PEDIRDATOS_H_ */

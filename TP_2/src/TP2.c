@@ -26,6 +26,9 @@ int main(void) {
 	int salir;
 	int borrarID;
 	int modificarID;
+	int flagEmpleado=0;
+	int imprimir;
+
 
 	Employee lista[CANTIDADEMP];
 
@@ -45,30 +48,56 @@ int main(void) {
 
 	while(salir == 0){
 
-		pedirNumero(&opcion,"Selecionar -->", "No es una opcion valida",1, 5, REINTENTOS);
+		pedirStringEntero(&opcion,"\nSelecionar -->", "No es una opcion valida",1, 5, REINTENTOS);
 
 		switch(opcion){
 			case 1:{
-				addEmployee(lista, CANTIDADEMP);
+				if(addEmployee(lista, CANTIDADEMP)==1){
+					flagEmpleado= 1;
+				}else{
+					printf("No se pudo crear correctamente el empleado");
+				}
 
 				break;
 			}
 			case 2:{
-				pedirNumero(&modificarID,"Ingrese el ID del empelado que desea modificar", "No es una opcion valida",1, INT_MAX, REINTENTOS);
+				if(flagEmpleado==1){
+					pedirStringEntero(&modificarID,"Ingrese el ID del empelado que desea modificar", "No es una opcion valida",1, INT_MAX, REINTENTOS);
 
-				modifyEmployee(lista, CANTIDADEMP, modificarID);
+					modifyEmployee(lista, CANTIDADEMP, modificarID);
+
+				}else{
+					printf("Debes ingresar un empleado primero");
+				}
+
 
 				break;
 			}
 			case 3:{
-				pedirNumero(&borrarID,"Ingrese el ID del empelado que desea eliminar", "No es una opcion valida",1, INT_MAX, REINTENTOS);
+				if(flagEmpleado==1){
+					pedirStringEntero(&borrarID,"Ingrese el ID del empelado que desea eliminar", "No es una opcion valida",1, INT_MAX, REINTENTOS);
 
-				removeEmployee(lista, CANTIDADEMP, borrarID);
-
+					removeEmployee(lista, CANTIDADEMP, borrarID);
+				}else{
+					printf("Debes ingresar un empleado primero");
+				}
 				break;
 			}
 			case 4:{
-				printEmployees(lista, CANTIDADEMP);
+				if(flagEmpleado==1){
+
+					pedirStringEntero(&imprimir,"\nSi quiere imprimir todoslos empledos ingrese 1\nSi quiere ver los empleados que superan el salario promerio presione 2", "No es una opcion valida",1, 2, REINTENTOS);
+					if(imprimir==1){
+					orderByName(lista,CANTIDADEMP);
+					printEmployees(lista, CANTIDADEMP);
+					}
+					if(imprimir==2){
+					calcularPromedio(lista,CANTIDADEMP);
+					}
+				}else{
+					printf("Debes ingresar un empleado primero");
+				}
+
 				break;
 			}
 			case 5:{
