@@ -41,8 +41,7 @@ int main()
             case 1:{
                 if(flagListaCargada ==0)
                 {
-                    controller_loadFromText("dataTexto.csv",listaEmpleados);
-                    flagListaCargada=1;
+                    if(controller_loadFromText("dataTexto.csv",listaEmpleados)==1)  flagListaCargada=1;
                 }
                 else
                 {
@@ -53,8 +52,7 @@ int main()
             case 2:{
                 if(flagListaCargada ==0)
                 {
-                    controller_loadFromBinary("dataBinario.csv",listaEmpleados);
-                    flagListaCargada=1;
+                    if(controller_loadFromBinary("dataBinario.csv",listaEmpleados)==1) flagListaCargada=1;
                 }
                 else
                 {

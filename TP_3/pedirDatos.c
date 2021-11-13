@@ -63,7 +63,7 @@ int esNumerica(char cadena[])
 
 
 int pedirStringEntero(int* pResultado, char* mensaje, char* mensajeError, int minimo, int maximo, int reintentos){
-    int retorno = 0;
+    int retorno = -1;
     int bufferInt;
     int i;
     char bufferCadenaAux[16];

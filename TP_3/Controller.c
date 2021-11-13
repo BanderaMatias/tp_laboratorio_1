@@ -13,23 +13,6 @@
  * @param maxId 
  * @return int 
  */
-int controller_id(char* path, int* maxId)
-{
-    FILE* f = fopen(path,"rb");
-    if (f!=NULL)
-    {
-        parser_maxId(f,maxId);
-        fclose(f);
-    }
-    return 1;
-}
-/**
- * @brief 
- * 
- * @param path 
- * @param maxId 
- * @return int 
- */
 int controller_saveId(char* path, int* maxId)
 {
     FILE* f = fopen(path,"wb");
@@ -42,6 +25,31 @@ int controller_saveId(char* path, int* maxId)
     return 1;
 }
 
+/**
+ * @brief 
+ * 
+ * @param path 
+ * @param maxId 
+ * @return int 
+ */
+int controller_id(char* path, int* maxId)
+{
+
+    FILE* f = fopen(path,"rb");
+    if (f!=NULL)
+    {
+        parser_maxId(f,maxId);
+        fclose(f);
+    }
+    else
+    {
+        controller_saveId(path,maxId);
+
+    }
+    return 1;
+}
+
+
 /** \brief Carga los datos de los empleados desde el archivo data.csv (modo texto).
  *
  * \param path char*
@@ -51,10 +59,12 @@ int controller_saveId(char* path, int* maxId)
  */
 int controller_loadFromText(char* path , LinkedList* pArrayListEmployee)
 {
+    int retorno =-1;
     FILE* f = fopen(path,"r");
     if (f!=NULL)
     {
         parser_EmployeeFromText(f,pArrayListEmployee);
+        retorno=1;
     }
     else
     {
@@ -65,7 +75,7 @@ int controller_loadFromText(char* path , LinkedList* pArrayListEmployee)
     fclose(f);
 
 
-    return 1;
+    return retorno;
 }
 
 /** \brief Carga los datos de los empleados desde el archivo data.csv (modo binario).
@@ -77,10 +87,12 @@ int controller_loadFromText(char* path , LinkedList* pArrayListEmployee)
  */
 int controller_loadFromBinary(char* path , LinkedList* pArrayListEmployee)
 {
+    int retorno =-1;
     FILE* f = fopen(path,"rb");
     if (f != NULL)
     {
         parser_EmployeeFromBinary(f,pArrayListEmployee);
+        retorno =1;
     }
     else
     {
@@ -89,7 +101,7 @@ int controller_loadFromBinary(char* path , LinkedList* pArrayListEmployee)
     }
     
     
-    return 1;
+    return retorno;
 }
 
 /** \brief Alta de empleados
@@ -101,7 +113,9 @@ int controller_loadFromBinary(char* path , LinkedList* pArrayListEmployee)
  */
 int controller_addEmployee(LinkedList* pArrayListEmployee)
 {
+
     Employee* pEmployee;
+    int retorno=-1;
     int auxId;
     char auxNombre[128];
     int auxHoras;
@@ -109,16 +123,25 @@ int controller_addEmployee(LinkedList* pArrayListEmployee)
     controller_id("id.csv", &auxId);
 
     pEmployee=employee_new();
-    pEmployee->id= auxId;
-    employee_getNombre(pEmployee,auxNombre);
-    employee_getHorasTrabajadas(pEmployee,&auxHoras);
-    employee_getSueldo(pEmployee,&auxSueldo);
-    ll_add(pArrayListEmployee,pEmployee);
+    if(pEmployee!=NULL)
+    {
+        pEmployee->id= auxId;
 
-    auxId++;
+        if( employee_getNombre(pEmployee,auxNombre)==1&&
+            employee_getHorasTrabajadas(pEmployee,&auxHoras)==1&&
+            employee_getSueldo(pEmployee,&auxSueldo)==1)
+        {
+            ll_add(pArrayListEmployee,pEmployee);
+            auxId++;
+            retorno=1;
+        }    
+
+    }
+
+    
     controller_saveId("id.csv", &auxId);
 
-    return 1;
+    return retorno;
 }
 /** \brief Listar empleados
  *
@@ -131,6 +154,8 @@ int controller_ListEmployee(LinkedList* pArrayListEmployee)
 {
     Employee* pEaux;
 
+    int retorno=-1;
+
     if (pArrayListEmployee !=NULL)
     {
         for (int i = 1; i < ll_len(pArrayListEmployee); i++)
@@ -139,10 +164,11 @@ int controller_ListEmployee(LinkedList* pArrayListEmployee)
             printf("%d,%s,%d,%d\n",pEaux->id,pEaux->nombre,pEaux->horasTrabajadas,pEaux->sueldo);
 
         }
+        retorno=1;
     }
 
 
-    return 1;
+    return retorno;
 }
 
 
@@ -155,11 +181,23 @@ int controller_ListEmployee(LinkedList* pArrayListEmployee)
  */
 int controller_editEmployee(LinkedList* pArrayListEmployee)
 {
-    controller_ListEmployee(pArrayListEmployee);
+    int retorno = -1;
+    if(controller_ListEmployee(pArrayListEmployee)==-1)
+    {
+        puts("\nNo se pudo imprimir la lista");
+    }
     int modificarID;
-    pedirStringEntero(&modificarID,"Ingrese el ID del empleado que dese modificar","El ID ingresado es invalido, ingreselo nuevamente: ",0,INT_MAX,3);
-    employee_modify(pArrayListEmployee,modificarID);
-    return 1;
+
+    if(pedirStringEntero(&modificarID,"Ingrese el ID del empleado que dese modificar","El ID ingresado es invalido, ingreselo nuevamente: ",0,INT_MAX,3)==1)
+    {
+        employee_modify(pArrayListEmployee,modificarID);
+        retorno=1;
+    }
+    else
+    {
+        puts("No se pudo modificar el empleado");
+    }
+    return retorno;
 }
 
 /** \brief Baja de empleado
@@ -171,12 +209,24 @@ int controller_editEmployee(LinkedList* pArrayListEmployee)
  */
 int controller_removeEmployee(LinkedList* pArrayListEmployee)
 {
-    controller_ListEmployee(pArrayListEmployee);
+    int retorno = -1;
+    if(controller_ListEmployee(pArrayListEmployee)==-1)
+    {
+        puts("\nNo se pudo imprimir la lista");
+    }
     int borrarID;
 
-    pedirStringEntero(&borrarID,"Ingrese el ID del empleado que dese eliminar","El ID ingresado es invalido, ingreselo nuevamente: ",0,INT_MAX,3);
-    employee_delete(pArrayListEmployee,borrarID);   
-    return 1;
+    if(pedirStringEntero(&borrarID,"Ingrese el ID del empleado que dese eliminar","El ID ingresado es invalido, ingreselo nuevamente: ",0,INT_MAX,3)==1)
+    {
+        employee_delete(pArrayListEmployee,borrarID);
+        retorno=1;
+    }
+    else
+    {
+        puts("No se pudo eliminar el empleado");
+    }
+       
+    return retorno;
 }
 
 
