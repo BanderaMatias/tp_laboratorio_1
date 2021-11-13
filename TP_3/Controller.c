@@ -6,6 +6,41 @@
 #include "parser.h"
 #include "pedirDatos.h"
 
+/**
+ * @brief 
+ * 
+ * @param path 
+ * @param maxId 
+ * @return int 
+ */
+int controller_id(char* path, int* maxId)
+{
+    FILE* f = fopen(path,"rb");
+    if (f!=NULL)
+    {
+        parser_maxId(f,maxId);
+        fclose(f);
+    }
+    return 1;
+}
+/**
+ * @brief 
+ * 
+ * @param path 
+ * @param maxId 
+ * @return int 
+ */
+int controller_saveId(char* path, int* maxId)
+{
+    FILE* f = fopen(path,"wb");
+    if (f!=NULL)
+    {
+        fwrite(maxId,sizeof(int),1,f);
+
+        fclose(f);
+    }
+    return 1;
+}
 
 /** \brief Carga los datos de los empleados desde el archivo data.csv (modo texto).
  *
@@ -17,8 +52,16 @@
 int controller_loadFromText(char* path , LinkedList* pArrayListEmployee)
 {
     FILE* f = fopen(path,"r");
-
-    parser_EmployeeFromText(f,pArrayListEmployee);
+    if (f!=NULL)
+    {
+        parser_EmployeeFromText(f,pArrayListEmployee);
+    }
+    else
+    {
+        f = fopen(path,"w");  
+        puts("No se encontro el archivo, por lo tanto lo creamos");
+    }
+    
     fclose(f);
 
 
@@ -35,7 +78,17 @@ int controller_loadFromText(char* path , LinkedList* pArrayListEmployee)
 int controller_loadFromBinary(char* path , LinkedList* pArrayListEmployee)
 {
     FILE* f = fopen(path,"rb");
-    parser_EmployeeFromBinary(f,pArrayListEmployee);
+    if (f != NULL)
+    {
+        parser_EmployeeFromBinary(f,pArrayListEmployee);
+    }
+    else
+    {
+       f = fopen(path,"wb");  
+        puts("No se encontro el archivo, por lo tanto lo creamos");
+    }
+    
+    
     return 1;
 }
 
@@ -67,6 +120,31 @@ int controller_addEmployee(LinkedList* pArrayListEmployee)
 
     return 1;
 }
+/** \brief Listar empleados
+ *
+ * \param path char*
+ * \param pArrayListEmployee LinkedList*
+ * \return int
+ *
+ */
+int controller_ListEmployee(LinkedList* pArrayListEmployee)
+{
+    Employee* pEaux;
+
+    if (pArrayListEmployee !=NULL)
+    {
+        for (int i = 1; i < ll_len(pArrayListEmployee); i++)
+        {
+            pEaux= ll_get(pArrayListEmployee,i);
+            printf("%d,%s,%d,%d\n",pEaux->id,pEaux->nombre,pEaux->horasTrabajadas,pEaux->sueldo);
+
+        }
+    }
+
+
+    return 1;
+}
+
 
 /** \brief Modificar datos de empleado
  *
@@ -101,30 +179,6 @@ int controller_removeEmployee(LinkedList* pArrayListEmployee)
     return 1;
 }
 
-/** \brief Listar empleados
- *
- * \param path char*
- * \param pArrayListEmployee LinkedList*
- * \return int
- *
- */
-int controller_ListEmployee(LinkedList* pArrayListEmployee)
-{
-    Employee* pEaux;
-
-    if (pArrayListEmployee !=NULL)
-    {
-        for (int i = 1; i < ll_len(pArrayListEmployee); i++)
-        {
-            pEaux= ll_get(pArrayListEmployee,i);
-            printf("%d,%s,%d,%d\n",pEaux->id,pEaux->nombre,pEaux->horasTrabajadas,pEaux->sueldo);
-
-        }
-    }
-    
-    
-    return 1;
-}
 
 /** \brief Ordenar empleados
  *
@@ -136,8 +190,7 @@ int controller_ListEmployee(LinkedList* pArrayListEmployee)
 int controller_sortEmployee(LinkedList* pArrayListEmployee)
 {
     int orden=0;
-    puts("\nOrdenar por:\n1)ID\n2)Nombre\n3)Horas\n4)Sueldo\n5)Salir.");
-    pedirStringEntero(&orden,"\nSeleccionar-->","\nEl valor ingresado no es valido",1,5,3);
+    pedirStringEntero(&orden,"\nOrdenar por:\n1)ID ASC\n2)ID DESC \n3)Nombre A-Z\n4)Nombre Z-A \n5)Horas ASC\n6)Horas DESC \n7)Sueldo ASC \n8)Sueldo DESC\n9)Salir.","\nEl valor ingresado no es valido",1,9,3);
 
     switch (orden)
     {
@@ -146,27 +199,39 @@ int controller_sortEmployee(LinkedList* pArrayListEmployee)
         break;
     }
     case 2:{
-        ll_sort(pArrayListEmployee,ordenPorNombre,1);
+        ll_sort(pArrayListEmployee,ordenPorID,0);
         break;
     }
     case 3:{
-        ll_sort(pArrayListEmployee,ordenPorHoras,1);
+        ll_sort(pArrayListEmployee,ordenPorNombre,1);
         break;
     }
     case 4:{
+        ll_sort(pArrayListEmployee,ordenPorNombre,0);
+        break;
+    }
+    case 5:{
+        ll_sort(pArrayListEmployee,ordenPorHoras,1);
+        break;
+    }
+    case 6:{
+        ll_sort(pArrayListEmployee,ordenPorHoras,0);
+        break;
+    }
+    case 7:{
         ll_sort(pArrayListEmployee,ordenPorSueldo,1);
         break;
     }
-    case 5:{    
+    case 8:{
+        ll_sort(pArrayListEmployee,ordenPorSueldo,0);
+        break;
+    }
+    case 9:{    
         
         break;
     }
        
-    
-    default:
-        break;
     }
-    
     return 1;
 }
 
@@ -220,29 +285,6 @@ int controller_saveAsBinary(char* path , LinkedList* pArrayListEmployee)
             
             //fprintf(f,"%d,%s,%d,%d\n",pEaux->id,pEaux->nombre,pEaux->horasTrabajadas,pEaux->sueldo);
         }
-        fclose(f);
-    }
-    return 1;
-}
-
-int controller_id(char* path, int* maxId)
-{
-    FILE* f = fopen(path,"rb");
-    if (f!=NULL)
-    {
-        parser_maxId(f,maxId);
-        fclose(f);
-    }
-    return 1;
-}
-
-int controller_saveId(char* path, int* maxId)
-{
-    FILE* f = fopen(path,"wb");
-    if (f!=NULL)
-    {
-        fwrite(maxId,sizeof(int),1,f);
-
         fclose(f);
     }
     return 1;
