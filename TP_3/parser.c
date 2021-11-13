@@ -81,6 +81,22 @@ int parser_EmployeeFromBinary(FILE* pFile , LinkedList* pArrayListEmployee)
         }while(feof(pFile)==0);  
 
     }
+    
+    fclose(pFile);
+
+    return 1;
+}
+
+int parser_maxId(FILE* pFile , int* maxId)
+{    
+    if (pFile!=NULL)
+    {   
+       fread(maxId,sizeof(int),1,pFile);
+    
+
+    }
+    
+    fclose(pFile);
 
     return 1;
 }

@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> 
-#include <limits.h>  
+#include <limits.h> 
+#include <ctype.h> 
 #include "Employee.h"
 #include "pedirDatos.h"
 #include "LinkedList.h"
@@ -156,10 +157,16 @@ int employee_setNombre(Employee* this,char* nombre)
 int employee_getNombre(Employee* this,char* nombre)
 {
 	int retorno = -1;//error
+	int auxChar;
 	pedirStringTexto(nombre,128,"\nIngrese el nombre de empleado:","\nEl nombre ingresado es invalido, ingreselo nuevamente: ",3);
 
 	if(this != NULL && nombre != NULL)
 	{
+		if(nombre[0]>= 'a' && nombre[0]<='z')
+		{
+			auxChar=nombre[0];
+			nombre[0]=auxChar-32;
+		}
 		strncpy(this->nombre,nombre, 128);
 		retorno = 1;//exito
 	}

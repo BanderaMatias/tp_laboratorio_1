@@ -10,4 +10,5 @@
 
 int parser_EmployeeFromText(FILE* pFile , LinkedList* pArrayListEmployee);
 int parser_EmployeeFromBinary(FILE* pFile , LinkedList* pArrayListEmployee);
+int parser_maxId(FILE* pFile , int* maxId);
 #endif /* PARSER_H_ */

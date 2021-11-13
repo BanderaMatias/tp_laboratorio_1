@@ -36,7 +36,6 @@ int controller_loadFromBinary(char* path , LinkedList* pArrayListEmployee)
 {
     FILE* f = fopen(path,"rb");
     parser_EmployeeFromBinary(f,pArrayListEmployee);
-    fclose(f);
     return 1;
 }
 
@@ -54,13 +53,17 @@ int controller_addEmployee(LinkedList* pArrayListEmployee)
     char auxNombre[128];
     int auxHoras;
     int auxSueldo;
+    controller_id("id.csv", &auxId);
 
     pEmployee=employee_new();
-    employee_getId(pEmployee,&auxId);
+    pEmployee->id= auxId;
     employee_getNombre(pEmployee,auxNombre);
     employee_getHorasTrabajadas(pEmployee,&auxHoras);
     employee_getSueldo(pEmployee,&auxSueldo);
     ll_add(pArrayListEmployee,pEmployee);
+
+    auxId++;
+    controller_saveId("id.csv", &auxId);
 
     return 1;
 }
@@ -76,7 +79,7 @@ int controller_editEmployee(LinkedList* pArrayListEmployee)
 {
     controller_ListEmployee(pArrayListEmployee);
     int modificarID;
-    pedirStringEntero(&modificarID,"Ingrese el ID del empleado que dese eliminar","El ID ingresado es invalido, ingreselo nuevamente: ",0,INT_MAX,3);
+    pedirStringEntero(&modificarID,"Ingrese el ID del empleado que dese modificar","El ID ingresado es invalido, ingreselo nuevamente: ",0,INT_MAX,3);
     employee_modify(pArrayListEmployee,modificarID);
     return 1;
 }
@@ -202,15 +205,44 @@ int controller_saveAsBinary(char* path , LinkedList* pArrayListEmployee)
 {
     FILE* f = fopen(path,"wb");
     Employee* pEaux; 
-    if(f!=NULL)
+    if(f!=NULL && pArrayListEmployee != NULL)
     {
-        fprintf(f,"id,nombre,horasTrabajadas,sueldo\n");
-        for(int i=1; i<ll_len(pArrayListEmployee); i++)
+        for(int i=0; i<pArrayListEmployee->size; i++)
         {
             pEaux = ll_get(pArrayListEmployee,i);
-            fwrite(pEaux,sizeof(Employee),1,f);
+           
+            if (pEaux != NULL)
+            {
+                fwrite(pEaux,sizeof(Employee),1,f);
+            }
+
+            pEaux= NULL;
+            
             //fprintf(f,"%d,%s,%d,%d\n",pEaux->id,pEaux->nombre,pEaux->horasTrabajadas,pEaux->sueldo);
         }
+        fclose(f);
+    }
+    return 1;
+}
+
+int controller_id(char* path, int* maxId)
+{
+    FILE* f = fopen(path,"rb");
+    if (f!=NULL)
+    {
+        parser_maxId(f,maxId);
+        fclose(f);
+    }
+    return 1;
+}
+
+int controller_saveId(char* path, int* maxId)
+{
+    FILE* f = fopen(path,"wb");
+    if (f!=NULL)
+    {
+        fwrite(maxId,sizeof(int),1,f);
+
         fclose(f);
     }
     return 1;
