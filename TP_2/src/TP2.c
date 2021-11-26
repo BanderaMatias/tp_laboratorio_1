@@ -28,9 +28,11 @@ int main(void) {
 	int modificarID;
 	int flagEmpleado=0;
 	int imprimir;
+	int maxID=1;
 
 
 	Employee lista[CANTIDADEMP];
+
 
 	salir = 0;
 
@@ -40,19 +42,20 @@ int main(void) {
 		salir=1;
 	}
 
-	printf("1) ALTAS \n");
-	printf("2) MODIFICAR \n");
-	printf("3) BAJA \n");
-	printf("4) INFORMAR \n");
-	printf("5) Salir \n");
-
 	while(salir == 0){
+
+		printf("\n1) ALTAS \n");
+		printf("2) MODIFICAR \n");
+		printf("3) BAJA \n");
+		printf("4) INFORMAR \n");
+		printf("5) Salir \n");
 
 		pedirStringEntero(&opcion,"\nSelecionar -->", "No es una opcion valida",1, 5, REINTENTOS);
 
 		switch(opcion){
 			case 1:{
-				if(addEmployee(lista, CANTIDADEMP)==1){
+				if(addEmployee(lista, CANTIDADEMP,maxID)==1){
+					maxID++;
 					flagEmpleado= 1;
 				}else{
 					printf("No se pudo crear correctamente el empleado");
@@ -62,6 +65,7 @@ int main(void) {
 			}
 			case 2:{
 				if(flagEmpleado==1){
+					printEmployees(lista, CANTIDADEMP);
 					pedirStringEntero(&modificarID,"Ingrese el ID del empelado que desea modificar", "No es una opcion valida",1, INT_MAX, REINTENTOS);
 
 					modifyEmployee(lista, CANTIDADEMP, modificarID);
@@ -75,6 +79,7 @@ int main(void) {
 			}
 			case 3:{
 				if(flagEmpleado==1){
+					printEmployees(lista, CANTIDADEMP);
 					pedirStringEntero(&borrarID,"Ingrese el ID del empelado que desea eliminar", "No es una opcion valida",1, INT_MAX, REINTENTOS);
 
 					removeEmployee(lista, CANTIDADEMP, borrarID);
@@ -86,10 +91,9 @@ int main(void) {
 			case 4:{
 				if(flagEmpleado==1){
 
-					pedirStringEntero(&imprimir,"\nSi quiere imprimir todoslos empledos ingrese 1\nSi quiere ver los empleados que superan el salario promerio presione 2", "No es una opcion valida",1, 2, REINTENTOS);
+					pedirStringEntero(&imprimir,"\nSi quiere imprimir todoslos empledos ingrese 1\nSi quiere ver los empleados que superan el salario promerio presione 2\n", "No es una opcion valida",1, 2, REINTENTOS);
 					if(imprimir==1){
-					orderByName(lista,CANTIDADEMP);
-					printEmployees(lista, CANTIDADEMP);
+					ordenarEmpleados(lista,CANTIDADEMP);
 					}
 					if(imprimir==2){
 					calcularPromedio(lista,CANTIDADEMP);
